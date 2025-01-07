@@ -3,8 +3,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: linear-gradient(45deg, #FFB6C1, #87CEFA, #FFD700); /* Gradient nền từ hồng, xanh và vàng */
-    background-size: 400% 400%; /* Tạo hiệu ứng chuyển động nền */
+    background-color: #f0f8ff; /* Tạo hiệu ứng chuyển động nền */
     animation: gradientAnimation 5s ease infinite; /* Thêm hiệu ứng chuyển động cho gradient */
     display: flex;
     justify-content: center;
