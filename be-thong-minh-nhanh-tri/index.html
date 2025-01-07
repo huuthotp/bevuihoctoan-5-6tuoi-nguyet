@@ -16,6 +16,8 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh; /* Đảm bảo body có chiều cao đầy đủ của viewport */
+            align-items: center;
+            justify-content: center;
         }
 
         @keyframes gradientAnimation {
@@ -26,68 +28,52 @@
 
         h1 {
             color: #333;
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin: 15px 0;
         }
 
         .container {
             display: flex;
-            justify-content: space-around;
-            align-items: center;
-            flex-grow: 1; /* Chiếm không gian còn lại */
+            justify-content: space-between;
+            flex-wrap: wrap; /* Allow items to wrap in smaller screens */
+            width: 100%;
+            max-width: 1200px; /* Limit the max width for larger screens */
+            margin: 20px;
         }
 
         footer {
-            height: 15px; /* Đảm bảo chiều cao footer cố định */
             text-align: center;
             padding: 15px 0;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1rem; /* Adjust font size for better readability */
         }
 
         .images, .equations {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            align-items: center;
             flex: 1;
-            height: 100%;
-            width: 350px;
-            box-sizing: border-box; /* Bao gồm viền trong kích thước */
-        }
-
-        .images div {
-            width: 690px;
-        }
-
-        .equations div {
-            width: 250px;
-            font-family: '.VnAvant', cursive, sans-serif;
-        }
-
-        .equations {
-            width: 350px;
-            margin-left: 20px;
+            min-width: 300px;
+            max-width: 45%; /* Ensure the divs don't exceed 45% of the container width */
         }
 
         .images div, .equations div {
+            width: 100%; /* Make sure divs are responsive */
             margin: 10px;
             padding: 10px;
             border: 3px solid #ddd;
             border-radius: 12px;
             background-color: #fff;
             cursor: pointer;
-            font-size: 3.5rem;
+            font-size: 2rem; /* Adjust font size for better readability */
             text-align: center;
             transition: transform 0.2s;
             display: flex;
             justify-content: center;
             align-items: center;
+			height: 89px;		
         }
-
-        .images div:hover, .equations div:hover {
-            transform: scale(1.1);
-        }
+		
+		.equations div {
+			width: 50%;
+		}
 
         .highlight {
             border-color: #007BFF;
@@ -113,7 +99,7 @@
             border-radius: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             text-align: center;
-            font-size: 2.2rem;
+            font-size: 2rem;
             z-index: 1000;
             display: none;
             max-width: 80%;
@@ -167,8 +153,8 @@
     </style>
 </head>
 <body>
-    <h1 style="font-size: 50px;margin-bottom: -15px;">Trò chơi: Bé Thông Minh Nhanh Trí</h1>
-    <h1 style="font-size: 30px;">Cách chơi: Nối các nhóm hình với ô có các số và kí hiệu phù hợp. (Ký hiệu "+" có nghĩa là "thêm" hay "gộp lại")</h1>
+    <h1>Trò chơi: Bé Thông Minh Nhanh Trí</h1>
+    <h1 style="font-size: 1.5rem;">Cách chơi: Nối các nhóm hình với ô có các số và kí hiệu phù hợp. (Ký hiệu "+" có nghĩa là "thêm" hay "gộp lại")</h1>
     <div class="container">
         <div class="images">
             <div data-value="9"><img src="./Hoa.png" alt="Sunflowers"></div>
@@ -204,130 +190,122 @@
     </div>
 
     <script>
-        let selectedImage = null;
-        const mySvgElement = document.querySelector('svg');
-        const drawnLines = [];
-        // Ví dụ thay thế các URL hiện tại bằng hình ảnh dễ thương:
-        const correctImageUrl = './congratulations-13773_256.gif';  // Icon mừng chiến thắng dễ thương
-        const incorrectImageUrl = './incorrect.gif';  // Icon thất bại dễ thương
-        
-        document.querySelectorAll('.images div').forEach(image => {
-            image.addEventListener('click', () => {
-                clearHighlight();
-                image.classList.add('highlight');
-                selectedImage = image;
-            });
-        });
+        document.addEventListener('DOMContentLoaded', () => {
+            let selectedImage = null;
+            const mySvgElement = document.querySelector('svg');
+            const drawnLines = [];
 
-        document.querySelectorAll('.equations div').forEach(equation => {
-            equation.addEventListener('click', () => {
-                if (selectedImage) {
-                    const imageValue = selectedImage.getAttribute('data-value');
-                    const equationValue = equation.getAttribute('data-value');
-
-                    drawArrow(selectedImage, equation);
-
-                    if (imageValue === equationValue) {
-                        showPopup('Chúc mừng! Bạn đã nối đúng!', correctImageUrl);
-                    } else {
-                        showPopup('Sai rồi! Hãy thử lại nhé!', incorrectImageUrl);
-                    }
-                    clearHighlight();
-                    selectedImage = null;
-                } else {
-                    alert('Hãy chọn một hình ảnh trước!');
-                }
-            });
-        });
-
-        function clearHighlight() {
             document.querySelectorAll('.images div').forEach(image => {
-                image.classList.remove('highlight');
+                image.addEventListener('click', () => {
+                    clearHighlight();
+                    image.classList.add('highlight');
+                    selectedImage = image;
+                });
             });
-        }
 
-        // Hàm chọn màu ngẫu nhiên
-        function getRandomColor() {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
+            document.querySelectorAll('.equations div').forEach(equation => {
+                equation.addEventListener('click', () => {
+                    if (selectedImage) {
+                        const imageValue = selectedImage.getAttribute('data-value');
+                        const equationValue = equation.getAttribute('data-value');
+
+                        if (imageValue === equationValue) {
+                            drawArrow(selectedImage, equation);
+                            showPopup('Chúc mừng! Bạn đã nối đúng!', correctImageUrl);
+                        } else {
+                            showPopup('Sai rồi! Hãy thử lại nhé!', incorrectImageUrl);
+                        }
+                        clearHighlight();
+                        selectedImage = null;
+                    } else {
+                        alert('Hãy chọn một hình ảnh trước!');
+                    }
+                });
+            });
+
+            function clearHighlight() {
+                document.querySelectorAll('.images div').forEach(image => {
+                    image.classList.remove('highlight');
+                });
             }
-            return color;
-        }
 
-        function drawArrow(startElement, endElement) {
-            const startRect = startElement.getBoundingClientRect();
-            const endRect = endElement.getBoundingClientRect();
+            function drawArrow(startElement, endElement) {
+                const startRect = startElement.getBoundingClientRect();
+                const endRect = endElement.getBoundingClientRect();
 
-            const startX = startRect.right;
-            const startY = startRect.top + startRect.height / 2;
-            const endX = endRect.left;
-            const endY = endRect.top + endRect.height / 2;
+                const startX = startRect.right;
+                const startY = startRect.top + startRect.height / 2;
+                const endX = endRect.left;
+                const endY = endRect.top + endRect.height / 2;
 
-            // Tính toán các điểm điều khiển cho đường cong
-            const controlX1 = startX + (endX - startX) / 3;
-            const controlY1 = startY - 100;
-            const controlX2 = endX - (endX - startX) / 3;
-            const controlY2 = endY + 100;
+                const controlX1 = startX + (endX - startX) / 3;
+                const controlY1 = startY - 100;
+                const controlX2 = endX - (endX - startX) / 3;
+                const controlY2 = endY + 100;
 
-            // Tạo mũi tên và chọn màu ngẫu nhiên
-            const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            const arrowColor = getRandomColor(); // Lấy màu ngẫu nhiên
+                const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                const arrowColor = getRandomColor();
 
-            arrow.setAttribute('d', `M ${startX} ${startY} C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${endX} ${endY}`);
-            arrow.setAttribute('stroke', arrowColor); // Áp dụng màu ngẫu nhiên
-            arrow.setAttribute('stroke-width', '3');
-            arrow.setAttribute('fill', 'none');
-            arrow.setAttribute('marker-end', 'url(#arrowhead)');
+                arrow.setAttribute('d', `M ${startX} ${startY} C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${endX} ${endY}`);
+                arrow.setAttribute('stroke', arrowColor);
+                arrow.setAttribute('stroke-width', '3');
+                arrow.setAttribute('fill', 'none');
+                arrow.setAttribute('marker-end', 'url(#arrowhead)');
 
-            mySvgElement.appendChild(arrow);
-            drawnLines.push(arrow);
-            
-            // Kiểm tra đáp án đúng hay sai và xử lý
-            const imageValue = startElement.getAttribute('data-value');
-            const equationValue = endElement.getAttribute('data-value');
+                mySvgElement.appendChild(arrow);
+                drawnLines.push(arrow);
 
-            if (imageValue !== equationValue) {
-                // Nếu đáp án sai, xóa mũi tên
-                arrow.remove(); // Xóa mũi tên khỏi giao diện
-                const index = drawnLines.indexOf(arrow);
-                if (index > -1) {
-                    drawnLines.splice(index, 1); // Xóa mũi tên khỏi mảng
+                const imageValue = startElement.getAttribute('data-value');
+                const equationValue = endElement.getAttribute('data-value');
+
+                if (imageValue !== equationValue) {
+                    arrow.remove();
+                    const index = drawnLines.indexOf(arrow);
+                    if (index > -1) {
+                        drawnLines.splice(index, 1);
+                    }
                 }
             }
-        }
 
-        function showPopup(message, iconUrl) {
-            const overlay = document.querySelector('.overlay');
-            const popup = document.querySelector('.popup');
-            const popupMessage = document.querySelector('.popup-message');
-            const popupImage = document.querySelector('.popup-image');
+            function showPopup(message, iconUrl) {
+                const overlay = document.querySelector('.overlay');
+                const popup = document.querySelector('.popup');
+                const popupMessage = document.querySelector('.popup-message');
+                const popupImage = document.querySelector('.popup-image');
 
-            popupMessage.textContent = message;
-            popupImage.src = iconUrl; // Cập nhật URL hình ảnh
+                popupMessage.textContent = message;
+                popupImage.src = iconUrl;
 
-            overlay.style.display = 'block';
-            popup.style.display = 'block';
+                overlay.style.display = 'block';
+                popup.style.display = 'block';
 
-            setTimeout(() => {
-                overlay.style.display = 'none';
-                popup.style.display = 'none';
-            }, 2000);
-        }
-
-        function shuffleElements(container) {
-            const elements = Array.from(container.children);
-            for (let i = elements.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [elements[i], elements[j]] = [elements[j], elements[i]];
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    popup.style.display = 'none';
+                }, 2000);
             }
-            elements.forEach(el => container.appendChild(el));
-        }
 
-        // Shuffle images and equations at the start
-        shuffleElements(document.querySelector('.images'));
-        shuffleElements(document.querySelector('.equations'));
+            function getRandomColor() {
+                const letters = '0123456789ABCDEF';
+                let color = '#';
+                for (let i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+
+            function shuffleElements(container) {
+                const elements = Array.from(container.children);
+                for (let i = elements.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [elements[i], elements[j]] = [elements[j], elements[i]];
+                }
+                elements.forEach(el => container.appendChild(el));
+            }
+
+            shuffleElements(document.querySelector('.images'));
+            shuffleElements(document.querySelector('.equations'));
+        });
     </script>
 
     <script src="https://static.app/js/static.js" type="text/javascript"></script>
