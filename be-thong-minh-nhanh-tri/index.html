@@ -194,6 +194,9 @@
             let selectedImage = null;
             const mySvgElement = document.querySelector('svg');
             const drawnLines = [];
+			// Ví dụ thay thế các URL hiện tại bằng hình ảnh dễ thương:
+			const correctImageUrl = './congratulations-13773_256.gif';  // Icon mừng chiến thắng dễ thương
+			const incorrectImageUrl = './incorrect.gif';  // Icon thất bại dễ thương
 
             document.querySelectorAll('.images div').forEach(image => {
                 image.addEventListener('click', () => {
