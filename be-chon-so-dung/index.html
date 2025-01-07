@@ -128,13 +128,11 @@
         </div>
     </div>
 
-    <div class="popup" id="popup">
-        <img id="popup-icon" src="" alt="Icon">
-        <p id="popup-message"></p>
-        <button onclick="closePopup()">Đóng</button>
+    <div class="overlay"></div>
+    <div class="popup">
+        <p class="popup-message"></p>
+        <img src="" alt="Icon" class="popup-image">
     </div>
-
-    <div class="overlay" id="overlay"></div>
 
     <div class="countdown-container" id="countdown-container">5</div>
 
@@ -157,6 +155,8 @@
             const incorrectSound = document.getElementById('incorrect-sound');
             const countdownContainer = document.getElementById('countdown-container');
             const clockButton = document.getElementById('clock-button');
+			const correctImageUrl = './congratulations-13773_256.gif';  // Icon mừng chiến thắng dễ thương
+			const incorrectImageUrl = './incorrect.gif';  // Icon thất bại dễ thương
 
             function generateGame() {
                 const numbers = Array.from({ length: 10 }, (_, i) => i + 1);
@@ -222,20 +222,31 @@
                     event.target.style.backgroundColor = '#d4edda';
                     event.target.style.color = '#155724';
                     draggedElement.style.display = 'none';
-                    showPopup('Chúc mừng! Bạn đã hoàn thành dãy số!', 'https://cdn-icons-png.flaticon.com/512/3159/3159066.png');
+                    showPopup('Chúc mừng! Bạn đã hoàn thành dãy số!!', correctImageUrl);
                     correctSound.play();
                 } else {
-                    showPopup('Sai rồi! Hãy thử lại.', 'https://cdn-icons-png.flaticon.com/512/3159/3159020.png');
+                    showPopup('Sai rồi! Hãy thử lại!!', incorrectImageUrl);
                     incorrectSound.play();
                 }
             }
 
-            function showPopup(message, icon) {
-                popupMessage.textContent = message;
-                popupIcon.src = icon;
-                popup.style.display = 'block';
-                overlay.style.display = 'block';
-            }
+            function showPopup(message, iconUrl) {
+				const overlay = document.querySelector('.overlay');
+				const popup = document.querySelector('.popup');
+				const popupMessage = document.querySelector('.popup-message');
+				const popupImage = document.querySelector('.popup-image');
+
+				popupMessage.textContent = message;
+				popupImage.src = iconUrl; // Cập nhật URL hình ảnh
+
+				overlay.style.display = 'block';
+				popup.style.display = 'block';
+
+				setTimeout(() => {
+					overlay.style.display = 'none';
+					popup.style.display = 'none';
+				}, 3000);
+			}
 
             function closePopup() {
                 popup.style.display = 'none';
