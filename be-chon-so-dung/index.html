@@ -9,32 +9,41 @@
             text-align: center;
             background-color: #f0f8ff;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
         }
         .game-container {
             margin-top: 50px;
+            width: 100%;
+            max-width: 1200px;
         }
-        .number-sequence {
+        .number-sequence, .number-bank {
             display: flex;
             justify-content: center;
+            flex-wrap: wrap;
             margin-bottom: 30px;
         }
         .number {
-            width: 240px;
-            height: 240px;
-            margin: 0 36px;
+            width: 100px;
+            height: 100px;
+            margin: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 6px dashed #ccc;
-            font-size: 108px;
+            border: 3px dashed #ccc;
+            font-size: 2rem;
             color: #fff;
             background-color: #ffcccb;
-            border-radius: 20px;
+            border-radius: 10px;
             box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.1);
-			font-family: '.VnAvant', cursive, sans-serif;
+            font-family: '.VnAvant', cursive, sans-serif;
         }
         .number.draggable {
-            border: 6px solid #007bff;
+            border: 3px solid #007bff;
             cursor: grab;
             transition: transform 0.2s;
         }
@@ -45,12 +54,8 @@
             background-color: #f0e68c;
             color: #999;
         }
-        .number-bank {
-            display: flex;
-            justify-content: center;
-        }
         .number-bank .number {
-            border: 6px solid #ff4500;
+            border: 3px solid #ff4500;
             cursor: grab;
             background-color: #87ceeb;
             color: #2f4f4f;
@@ -71,8 +76,8 @@
             z-index: 10;
         }
         .popup img {
-            width: 100px;
-            height: 100px;
+            width: 50px;
+            height: 50px;
         }
         .overlay {
             position: fixed;
@@ -101,8 +106,8 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 80px;
-            height: 80px;
+            width: 50px;
+            height: 50px;
             background: url('./icon_dong_ho.jpg') no-repeat center center;
             background-size: contain;
             border: none;
@@ -137,130 +142,133 @@
 
     <audio id="correct-sound" src="./dung.mp3"></audio>
     <audio id="incorrect-sound" src="./sai.mp3"></audio>
-	<audio id="countdown-sound" src="./dem_gio.mp3"></audio>
+    <audio id="countdown-sound" src="./dem_gio.mp3"></audio>
 
     <script>
-        const sequenceContainer = document.getElementById('sequence-container');
-        const numberBank = document.getElementById('number-bank');
-        const popup = document.getElementById('popup');
-        const overlay = document.getElementById('overlay');
-        const popupIcon = document.getElementById('popup-icon');
-        const popupMessage = document.getElementById('popup-message');
-        const correctSound = document.getElementById('correct-sound');
-		const countdownSound = document.getElementById('countdown-sound');
-        const incorrectSound = document.getElementById('incorrect-sound');
-        const countdownContainer = document.getElementById('countdown-container');
-        const clockButton = document.getElementById('clock-button');
+        document.addEventListener('DOMContentLoaded', () => {
+            const sequenceContainer = document.getElementById('sequence-container');
+            const numberBank = document.getElementById('number-bank');
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('overlay');
+            const popupIcon = document.getElementById('popup-icon');
+            const popupMessage = document.getElementById('popup-message');
+            const correctSound = document.getElementById('correct-sound');
+            const countdownSound = document.getElementById('countdown-sound');
+            const incorrectSound = document.getElementById('incorrect-sound');
+            const countdownContainer = document.getElementById('countdown-container');
+            const clockButton = document.getElementById('clock-button');
 
-        function generateGame() {
-            const numbers = Array.from({ length: 10 }, (_, i) => i + 1);
-            const missingIndex = Math.floor(Math.random() * 10);
-            const missingNumber = numbers[missingIndex];
+            function generateGame() {
+                const numbers = Array.from({ length: 10 }, (_, i) => i + 1);
+                const missingIndex = Math.floor(Math.random() * 10);
+                const missingNumber = numbers[missingIndex];
 
-            sequenceContainer.innerHTML = '';
-            numberBank.innerHTML = '';
+                sequenceContainer.innerHTML = '';
+                numberBank.innerHTML = '';
 
-            numbers.forEach((num, index) => {
-                const numberDiv = document.createElement('div');
-                numberDiv.className = 'number';
+                numbers.forEach((num, index) => {
+                    const numberDiv = document.createElement('div');
+                    numberDiv.className = 'number';
 
-                if (index === missingIndex) {
-                    numberDiv.classList.add('empty');
-                    numberDiv.id = 'missing-number';
-                    numberDiv.ondrop = drop;
-                    numberDiv.ondragover = allowDrop;
-                    numberDiv.setAttribute('data-correct', num);
-                    sequenceContainer.appendChild(numberDiv);
-                } else {
+                    if (index === missingIndex) {
+                        numberDiv.classList.add('empty');
+                        numberDiv.id = 'missing-number';
+                        numberDiv.ondrop = drop;
+                        numberDiv.ondragover = allowDrop;
+                        numberDiv.setAttribute('data-correct', num);
+                        sequenceContainer.appendChild(numberDiv);
+                    } else {
+                        numberDiv.textContent = num;
+                        sequenceContainer.appendChild(numberDiv);
+                    }
+                });
+
+                var option2 = missingNumber + 2;
+                var option3 = missingNumber - 1;
+                if (missingNumber >= 9) {
+                    option2 = option2 - 3;
+                    option3 = option3 - 6
+                }
+
+                const options = [missingNumber, option2, option3];
+                shuffleArray(options).forEach((num) => {
+                    const numberDiv = document.createElement('div');
+                    numberDiv.className = 'number draggable';
                     numberDiv.textContent = num;
-                    sequenceContainer.appendChild(numberDiv);
+                    numberDiv.id = `number-${num}`;
+                    numberDiv.draggable = true;
+                    numberDiv.ondragstart = drag;
+                    numberBank.appendChild(numberDiv);
+                });
+            }
+
+            function allowDrop(event) {
+                event.preventDefault();
+            }
+
+            function drag(event) {
+                event.dataTransfer.setData('text', event.target.id);
+            }
+
+            function drop(event) {
+                event.preventDefault();
+                const data = event.dataTransfer.getData('text');
+                const draggedElement = document.getElementById(data);
+                const correctNumber = sequenceContainer.querySelector('.empty').getAttribute('data-correct');
+
+                if (draggedElement.textContent === correctNumber) {
+                    event.target.innerHTML = draggedElement.innerHTML;
+                    event.target.style.border = '3px solid #28a745';
+                    event.target.style.backgroundColor = '#d4edda';
+                    event.target.style.color = '#155724';
+                    draggedElement.style.display = 'none';
+                    showPopup('Chúc mừng! Bạn đã hoàn thành dãy số!', 'https://cdn-icons-png.flaticon.com/512/3159/3159066.png');
+                    correctSound.play();
+                } else {
+                    showPopup('Sai rồi! Hãy thử lại.', 'https://cdn-icons-png.flaticon.com/512/3159/3159020.png');
+                    incorrectSound.play();
                 }
-            });
-			var option2 = missingNumber + 2;
-			var option3 = missingNumber - 1;
-			if (missingNumber >= 9) {
-				option2 = option2 - 3;
-				option3 = option3 - 6
-			}
-			
-            const options = [missingNumber, option2, option3];
-            shuffleArray(options).forEach((num) => {
-                const numberDiv = document.createElement('div');
-                numberDiv.className = 'number draggable';
-                numberDiv.textContent = num;
-                numberDiv.id = `number-${num}`;
-                numberDiv.draggable = true;
-                numberDiv.ondragstart = drag;
-                numberBank.appendChild(numberDiv);
-            });
-        }
-
-        function allowDrop(event) {
-            event.preventDefault();
-        }
-
-        function drag(event) {
-            event.dataTransfer.setData('text', event.target.id);
-        }
-
-        function drop(event) {
-            event.preventDefault();
-            const data = event.dataTransfer.getData('text');
-            const draggedElement = document.getElementById(data);
-            const correctNumber = sequenceContainer.querySelector('.empty').getAttribute('data-correct');
-
-            if (draggedElement.textContent === correctNumber) {
-                event.target.innerHTML = draggedElement.innerHTML;
-                event.target.style.border = '6px solid #28a745';
-                event.target.style.backgroundColor = '#d4edda';
-                event.target.style.color = '#155724';
-                draggedElement.style.display = 'none';
-                showPopup('Chúc mừng! Bạn đã hoàn thành dãy số!', 'https://cdn-icons-png.flaticon.com/512/3159/3159066.png');
-                correctSound.play();
-            } else {
-                showPopup('Sai rồi! Hãy thử lại.', 'https://cdn-icons-png.flaticon.com/512/3159/3159020.png');
-                incorrectSound.play();
             }
-        }
 
-        function showPopup(message, icon) {
-            popupMessage.textContent = message;
-            popupIcon.src = icon;
-            popup.style.display = 'block';
-            overlay.style.display = 'block';
-        }
-
-        function closePopup() {
-            popup.style.display = 'none';
-            overlay.style.display = 'none';
-        }
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+            function showPopup(message, icon) {
+                popupMessage.textContent = message;
+                popupIcon.src = icon;
+                popup.style.display = 'block';
+                overlay.style.display = 'block';
             }
-            return array;
-        }
 
-        function startCountdown() {
-            let time = 10;
-            countdownContainer.style.display = 'none';
-            countdownContainer.textContent = time;
-            clockButton.style.display = 'none';
-			countdownSound.play();
-            const interval = setInterval(() => {
-                time -= 1;
+            function closePopup() {
+                popup.style.display = 'none';
+                overlay.style.display = 'none';
+            }
+
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+            function startCountdown() {
+                let time = 10;
+                countdownContainer.style.display = 'block';
                 countdownContainer.textContent = time;
-                if (time === 0) {
-                    clearInterval(interval);
-                    countdownContainer.style.display = 'none';
-                    clockButton.style.display = 'block';
-                }
-            }, 1000);
-        }
+                clockButton.style.display = 'none';
+                countdownSound.play();
+                const interval = setInterval(() => {
+                    time -= 1;
+                    countdownContainer.textContent = time;
+                    if (time === 0) {
+                        clearInterval(interval);
+                        countdownContainer.style.display = 'none';
+                        clockButton.style.display = 'block';
+                    }
+                }, 1000);
+            }
 
-        generateGame();
+            generateGame();
+        });
     </script>
 </body>
 </html>
