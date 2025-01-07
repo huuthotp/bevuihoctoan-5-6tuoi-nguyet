@@ -1,27 +1,27 @@
 const patterns = [
     {
-        sequence: ['🔴', '🟢', '🔵', '🔴', '🟢', '?', '🔴', '?', '🔵'],
-        dapan: ['🔴', '🟢', '🔵', '🔴', '🟢', '🔵', '🔴', '🟢', '🔵'],
+        sequence: ['<img src="images/red.png">', '<img src="images/green.png">', '<img src="images/blue.png">', '<img src="images/red.png">', '<img src="images/green.png">', '?', '<img src="images/red.png">', '?', '<img src="images/blue.png">'],
+        dapan: ['<img src="images/red.png">', '<img src="images/green.png">', '<img src="images/blue.png">', '<img src="images/red.png">', '<img src="images/green.png">', '<img src="images/blue.png">', '<img src="images/red.png">', '<img src="images/green.png">', '<img src="images/blue.png">'],
         rule: 'Chọn hình theo quy luật: Đỏ, Xanh lá, Xanh dương thay nhau',
-        options: ['🔴', '🟢', '🔵']
+        options: ['<img src="images/red.png">', '<img src="images/green.png">', '<img src="images/blue.png">']
     },
     {
-        sequence: ['🔴', '🔲', '▲', '🔴', '🔲', '?', '🔴', '?', '▲'],
-        dapan: ['🔴', '🔲', '▲', '🔴', '🔲', '▲', '🔴', '🔲', '▲'],
+        sequence: ['<img src="images/red.png">', '<img src="images/square.png">', '<img src="images/triangle.png">', '<img src="images/red.png">', '<img src="images/square.png">', '?', '<img src="images/red.png">', '?', '<img src="images/triangle.png">'],
+        dapan: ['<img src="images/red.png">', '<img src="images/square.png">', '<img src="images/triangle.png">', '<img src="images/red.png">', '<img src="images/square.png">', '<img src="images/triangle.png">', '<img src="images/red.png">', '<img src="images/square.png">', '<img src="images/triangle.png">'],
         rule: 'Chọn hình theo quy luật: Tròn, Vuông, Tam giác thay nhau',
-        options: ['🔴', '🔲', '▲']
+        options: ['<img src="images/red.png">', '<img src="images/square.png">', '<img src="images/triangle.png">']
     },
     {
-        sequence: ['🍊', '🥕', '🍊', '🥕', '🍊', '?', '🍊', '?', '🍊'],
-        dapan: ['🍊', '🥕', '🍊', '🥕', '🍊', '🥕', '🍊', '🥕', '🍊'],
+        sequence: ['<img src="images/orange.png">', '<img src="images/carrot.png">', '<img src="images/orange.png">', '<img src="images/carrot.png">', '<img src="images/orange.png">', '?', '<img src="images/orange.png">', '?', '<img src="images/orange.png">'],
+        dapan: ['<img src="images/orange.png">', '<img src="images/carrot.png">', '<img src="images/orange.png">', '<img src="images/carrot.png">', '<img src="images/orange.png">', '<img src="images/carrot.png">', '<img src="images/orange.png">', '<img src="images/carrot.png">', '<img src="images/orange.png">'],
         rule: 'Chọn hình theo quy luật củ quả: Hình quả cam, hình củ cà rốt',
-        options: ['🍊', '🥕']
+        options: ['<img src="images/orange.png">', '<img src="images/carrot.png">']
     },
     {
-        sequence: ['💙', '🦋', '💜', '💙', '🦋', '?', '💙', '?', '💜'],
-        dapan: ['💙', '🦋', '💜', '💙', '🦋', '💜', '💙', '🦋', '💜'],
+        sequence: ['<img src="images/blueheart.png">', '<img src="images/butterfly.png">', '<img src="images/purpleheart.png">', '<img src="images/blueheart.png">', '<img src="images/butterfly.png">', '?', '<img src="images/blueheart.png">', '?', '<img src="images/purpleheart.png">'],
+        dapan: ['<img src="images/blueheart.png">', '<img src="images/butterfly.png">', '<img src="images/purpleheart.png">', '<img src="images/blueheart.png">', '<img src="images/butterfly.png">', '<img src="images/purpleheart.png">', '<img src="images/blueheart.png">', '<img src="images/butterfly.png">', '<img src="images/purpleheart.png">'],
         rule: 'Chọn hình theo quy luật màu sắc của con bướm: Con bướm màu xanh, bướm màu tím',
-        options: ['💙', '💜', '🦋']
+        options: ['<img src="images/blueheart.png">', '<img src="images/purpleheart.png">', '<img src="images/butterfly.png">']
     }
 ];
 
@@ -39,7 +39,7 @@ function displayProblems() {
         pattern.sequence.forEach((shape, index) => {
             const shapeDiv = document.createElement('div');
             shapeDiv.classList.add('shape');
-            shapeDiv.textContent = shape;
+            shapeDiv.innerHTML = shape;
             shapeDiv.setAttribute('draggable', shape === '?');
             shapeDiv.dataset.index = index;
 
@@ -50,7 +50,7 @@ function displayProblems() {
             shapeDiv.addEventListener('drop', (e) => {
                 const draggedShape = e.dataTransfer.getData('shape');
                 if (draggedShape) {
-                    shapeDiv.textContent = draggedShape;
+                    shapeDiv.innerHTML = draggedShape;
                 }
             });
 
@@ -62,11 +62,11 @@ function displayProblems() {
         pattern.options.forEach(option => {
             const optionDiv = document.createElement('div');
             optionDiv.classList.add('option');
-            optionDiv.textContent = option;
+            optionDiv.innerHTML = option;
             optionDiv.draggable = true;
 
             optionDiv.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('shape', e.target.textContent);
+                e.dataTransfer.setData('shape', e.target.outerHTML);
             });
 
             optionsContainer.appendChild(optionDiv);
@@ -86,7 +86,7 @@ function checkAnswer() {
     patterns.forEach((pattern, index) => {
         const problemContainer = problemBoard.children[index];
         const board = problemContainer.querySelector('.board');
-        const userSequence = Array.from(board.children).map(child => child.textContent);
+        const userSequence = Array.from(board.children).map(child => child.innerHTML);
 
         if (JSON.stringify(userSequence) !== JSON.stringify(pattern.dapan)) {
             isCorrect = false;
