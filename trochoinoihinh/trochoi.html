@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trò Chơi Bé Thông Minh Nhanh Trí</title>
+    <style>
+        body {
+            --font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(45deg, #FFB6C1, #87CEFA, #FFD700); /* Gradient nền từ hồng, xanh và vàng */
+            background-size: 400% 400%; /* Tạo hiệu ứng chuyển động nền */
+            animation: gradientAnimation 5s ease infinite; /* Thêm hiệu ứng chuyển động cho gradient */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Đảm bảo body có chiều cao đầy đủ của viewport */
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin: 15px 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-grow: 1; /* Chiếm không gian còn lại */
+        }
+
+        footer {
+            height: 15px; /* Đảm bảo chiều cao footer cố định */
+            text-align: center;
+            padding: 15px 0;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .images, .equations {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            flex: 1;
+            height: 100%;
+            width: 350px;
+            box-sizing: border-box; /* Bao gồm viền trong kích thước */
+        }
+
+        .images div {
+            width: 690px;
+        }
+
+        .equations div {
+            width: 250px;
+            font-family: '.VnAvant', cursive, sans-serif;
+        }
+
+        .equations {
+            width: 350px;
+            margin-left: 20px;
+        }
+
+        .images div, .equations div {
+            margin: 10px;
+            padding: 10px;
+            border: 3px solid #ddd;
+            border-radius: 12px;
+            background-color: #fff;
+            cursor: pointer;
+            font-size: 3.5rem;
+            text-align: center;
+            transition: transform 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .images div:hover, .equations div:hover {
+            transform: scale(1.1);
+        }
+
+        .highlight {
+            border-color: #007BFF;
+            box-shadow: 0 0 10px #007BFF;
+        }
+
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            font-size: 2.2rem;
+            z-index: 1000;
+            display: none;
+            max-width: 80%;
+            animation: popupAnimation 0.5s ease-out;
+            border: 3px solid #FFD700;
+            background-color: #FCE4EC;
+        }
+
+        .popup p {
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .popup .popup-image {
+            width: 120px;
+            height: 120px;
+            margin-top: 20px;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .popup .popup-image:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes popupAnimation {
+            0% {
+                transform: translate(-50%, -60%);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+    <h1 style="font-size: 50px;margin-bottom: -15px;">Trò chơi: Bé Thông Minh Nhanh Trí</h1>
+    <h1 style="font-size: 30px;">Cách chơi: Nối các nhóm hình với ô có các số và kí hiệu phù hợp. (Ký hiệu "+" có nghĩa là "thêm" hay "gộp lại")</h1>
+    <div class="container">
+        <div class="images">
+            <div data-value="9">🌻🌻🌻🌻🌻 + 🌻🌻🌻🌻</div>
+            <div data-value="3">🍎🍎 + 🍎</div>
+            <div data-value="5">🎈🎈🎈 + 🎈🎈</div>
+            <div data-value="6">🐷🐷🐷 + 🐷🐷🐷</div>
+            <div data-value="8">✏️✏️✏️✏️ + ✏️✏️✏️✏️</div>
+            <div data-value="7">🚜🚜🚜🚜 + 🚜🚜🚜</div>
+        </div>
+        <div class="equations">
+            <div data-value="9">5 + 4</div>
+            <div data-value="3">2 + 1</div>
+            <div data-value="5">3 + 2</div>
+            <div data-value="6">3 + 3</div>
+            <div data-value="8">4 + 4</div>
+            <div data-value="7">4 + 3</div>
+        </div>
+    </div>
+    <footer>
+        <p>© 2024 Trò chơi: Bé Thông Minh Nhanh Trí.</p>
+    </footer>
+    <svg>
+        <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#007BFF"></polygon>
+            </marker>
+        </defs>
+    </svg>
+    <div class="overlay"></div>
+    <div class="popup">
+        <p class="popup-message"></p>
+        <img src="" alt="Icon" class="popup-image">
+    </div>
+
+    <script>
+        let selectedImage = null;
+        const mySvgElement = document.querySelector('svg');
+        const drawnLines = [];
+        // Ví dụ thay thế các URL hiện tại bằng hình ảnh dễ thương:
+        const correctImageUrl = './congratulations-13773_256.gif';  // Icon mừng chiến thắng dễ thương
+        const incorrectImageUrl = './incorrect.gif';  // Icon thất bại dễ thương
+        
+        document.querySelectorAll('.images div').forEach(image => {
+            image.addEventListener('click', () => {
+                clearHighlight();
+                image.classList.add('highlight');
+                selectedImage = image;
+            });
+        });
+
+        document.querySelectorAll('.equations div').forEach(equation => {
+            equation.addEventListener('click', () => {
+                if (selectedImage) {
+                    const imageValue = selectedImage.getAttribute('data-value');
+                    const equationValue = equation.getAttribute('data-value');
+
+                    drawArrow(selectedImage, equation);
+
+                    if (imageValue === equationValue) {
+                        showPopup('Chúc mừng! Bạn đã nối đúng!', correctImageUrl);
+                    } else {
+                        showPopup('Sai rồi! Hãy thử lại nhé!', incorrectImageUrl);
+                    }
+                    clearHighlight();
+                    selectedImage = null;
+                } else {
+                    alert('Hãy chọn một hình ảnh trước!');
+                }
+            });
+        });
+
+        function clearHighlight() {
+            document.querySelectorAll('.images div').forEach(image => {
+                image.classList.remove('highlight');
+            });
+        }
+
+        // Hàm chọn màu ngẫu nhiên
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function drawArrow(startElement, endElement) {
+            const startRect = startElement.getBoundingClientRect();
+            const endRect = endElement.getBoundingClientRect();
+
+            const startX = startRect.right;
+            const startY = startRect.top + startRect.height / 2;
+            const endX = endRect.left;
+            const endY = endRect.top + endRect.height / 2;
+
+            // Tính toán các điểm điều khiển cho đường cong
+            const controlX1 = startX + (endX - startX) / 3;
+            const controlY1 = startY - 100;
+            const controlX2 = endX - (endX - startX) / 3;
+            const controlY2 = endY + 100;
+
+            // Tạo mũi tên và chọn màu ngẫu nhiên
+            const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            const arrowColor = getRandomColor(); // Lấy màu ngẫu nhiên
+
+            arrow.setAttribute('d', `M ${startX} ${startY} C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${endX} ${endY}`);
+            arrow.setAttribute('stroke', arrowColor); // Áp dụng màu ngẫu nhiên
+            arrow.setAttribute('stroke-width', '3');
+            arrow.setAttribute('fill', 'none');
+            arrow.setAttribute('marker-end', 'url(#arrowhead)');
+
+            mySvgElement.appendChild(arrow);
+            drawnLines.push(arrow);
+            
+            // Kiểm tra đáp án đúng hay sai và xử lý
+            const imageValue = startElement.getAttribute('data-value');
+            const equationValue = endElement.getAttribute('data-value');
+
+            if (imageValue !== equationValue) {
+                // Nếu đáp án sai, xóa mũi tên
+                arrow.remove(); // Xóa mũi tên khỏi giao diện
+                const index = drawnLines.indexOf(arrow);
+                if (index > -1) {
+                    drawnLines.splice(index, 1); // Xóa mũi tên khỏi mảng
+                }
+            }
+        }
+
+        function showPopup(message, iconUrl) {
+            const overlay = document.querySelector('.overlay');
+            const popup = document.querySelector('.popup');
+            const popupMessage = document.querySelector('.popup-message');
+            const popupImage = document.querySelector('.popup-image');
+
+            popupMessage.textContent = message;
+            popupImage.src = iconUrl; // Cập nhật URL hình ảnh
+
+            overlay.style.display = 'block';
+            popup.style.display = 'block';
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                popup.style.display = 'none';
+            }, 2000);
+        }
+
+        function shuffleElements(container) {
+            const elements = Array.from(container.children);
+            for (let i = elements.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [elements[i], elements[j]] = [elements[j], elements[i]];
+            }
+            elements.forEach(el => container.appendChild(el));
+        }
+
+        // Shuffle images and equations at the start
+        shuffleElements(document.querySelector('.images'));
+        shuffleElements(document.querySelector('.equations'));
+    </script>
+
+    <script src="https://static.app/js/static.js" type="text/javascript"></script>
+</body>
+</html>
