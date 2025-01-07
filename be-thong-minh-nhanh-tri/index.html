@@ -233,42 +233,42 @@
             }
 
             function drawArrow(startElement, endElement) {
-                const startRect = startElement.getBoundingClientRect();
-                const endRect = endElement.getBoundingClientRect();
+				const startRect = startElement.getBoundingClientRect();
+				const endRect = endElement.getBoundingClientRect();
 
-                const startX = startRect.right;
-                const startY = startRect.top + startRect.height / 2;
-                const endX = endRect.left;
-                const endY = endRect.top + endRect.height / 2;
+				const startX = startRect.right;
+				const startY = startRect.top + startRect.height / 2;
+				const endX = endRect.left;
+				const endY = endRect.top + endRect.height / 2;
 
-                const controlX1 = startX + (endX - startX) / 3;
-                const controlY1 = startY - 100;
-                const controlX2 = endX - (endX - startX) / 3;
-                const controlY2 = endY + 100;
+				const controlX1 = startX + (endX - startX) / 3;
+				const controlY1 = startY - 100;
+				const controlX2 = endX - (endX - startX) / 3;
+				const controlY2 = endY + 100;
 
-                const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                const arrowColor = getRandomColor();
+				const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+				const arrowColor = getRandomColor();
 
-                arrow.setAttribute('d', `M ${startX} ${startY} C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${endX} ${endY}`);
-                arrow.setAttribute('stroke', arrowColor);
-                arrow.setAttribute('stroke-width', '3');
-                arrow.setAttribute('fill', 'none');
-                arrow.setAttribute('marker-end', 'url(#arrowhead)');
+				arrow.setAttribute('d', `M ${startX} ${startY} C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${endX} ${endY}`);
+				arrow.setAttribute('stroke', arrowColor);
+				arrow.setAttribute('stroke-width', '1'); // Smaller stroke width
+				arrow.setAttribute('fill', 'none');
+				arrow.setAttribute('marker-end', 'url(#arrowhead)');
 
-                mySvgElement.appendChild(arrow);
-                drawnLines.push(arrow);
+				mySvgElement.appendChild(arrow);
+				drawnLines.push(arrow);
 
-                const imageValue = startElement.getAttribute('data-value');
-                const equationValue = endElement.getAttribute('data-value');
+				const imageValue = startElement.getAttribute('data-value');
+				const equationValue = endElement.getAttribute('data-value');
 
-                if (imageValue !== equationValue) {
-                    arrow.remove();
-                    const index = drawnLines.indexOf(arrow);
-                    if (index > -1) {
-                        drawnLines.splice(index, 1);
-                    }
-                }
-            }
+				if (imageValue !== equationValue) {
+					arrow.remove();
+					const index = drawnLines.indexOf(arrow);
+					if (index > -1) {
+						drawnLines.splice(index, 1);
+					}
+				}
+			}
 
             function showPopup(message, iconUrl) {
                 const overlay = document.querySelector('.overlay');
